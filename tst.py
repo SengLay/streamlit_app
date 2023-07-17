@@ -20,13 +20,17 @@ def main():
 
     # Assume the data file is located in the same directory as the app
     data_file = "Photo/moey.png"
+    data_file_2 = "Photo/itc.png"
 
     # Load the data using the relative file path
     data = load_data(data_file)
+    data_2 = load_data(data_file_2)
 
     # Display the data in the app
     st.write(data)
     st.image(data)
+    st.image(data_2)
+    
 
 
 if __name__ == "__main__":
