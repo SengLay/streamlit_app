@@ -4,7 +4,6 @@ from pathlib import Path
 import base64
 import io
 import os
-import PyPDF2
 
 def table_of_content():
     # Table of Content
@@ -1262,18 +1261,11 @@ EDA_Salary()
 
 # Show pdf: report and guideline
 def show_pdf(file_path):
-    pdf_file = open(file_path, 'rb')
-    pdf_reader = PyPDF2.PdfReader(pdf_file)
+    with open(file_path, "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
 
-    for page_num in range(len(pdf_reader.pages)):
-        page = pdf_reader.pages[page_num]
-        img_data = page.extract_images()[0].get('data')
-        img_bytes = img_data.tobytes()
-        base64_img = base64.b64encode(img_bytes).decode('utf-8')
-
-        st.image(base64_img, use_column_width=True)
-
-    pdf_file.close()
+    pdf_display = f'<center><embed src="data:application/pdf;base64,{base64_pdf}" width="700" height="800" type="application/pdf"></embed></center>'
+    st.markdown(pdf_display, unsafe_allow_html=True)
 
 st.markdown("""<div id="report"></div>""", unsafe_allow_html=True)
 st.markdown("<div style='font-size: 30px';><center><b>Job Analysis Report</b></center></div>", unsafe_allow_html=True)
