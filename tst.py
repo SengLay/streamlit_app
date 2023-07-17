@@ -19,7 +19,7 @@ def main():
     st.title("My Streamlit App")
 
     # Assume the data file is located in the same directory as the app
-    data_file = "/Users/mac/Desktop/Streamlit App/Photo/moey.png"
+    data_file = "Photo/moey.png"
 
     # Load the data using the relative file path
     data = load_data(data_file)
