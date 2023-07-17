@@ -1279,9 +1279,11 @@ def get_pdf_download_link(file_path):
     return download_link
 
 st.markdown("""<div id="report"></div>""", unsafe_allow_html=True)
+st.write("👇 Job Analysis Report | Click the link down below 📑")
 # st.markdown("<div style='font-size: 30px';><center><b>Job Analysis Report</b></center></div>", unsafe_allow_html=True)
 show_pdf("PDF Report/Report.pdf")
 
 st.markdown("""<div id="guideline"></div>""", unsafe_allow_html=True)
+st.write("👇 Job Analysis Guideline | Click the link down below 📑")
 # st.markdown("<div style='font-size: 30px';><center><b>Job Analysis Guideline</b></center></div>", unsafe_allow_html=True)
 show_pdf("PDF Report/Guideline.pdf")
