@@ -769,7 +769,7 @@ def EDA_Location():
             Take a look at the result after checking.
             """
         )
-        df = pd.read_csv('/Users/mac/Desktop/Streamlit App/CSV/data2.csv')
+        df = pd.read_csv('CSV/data2.csv')
         s = df.Location.value_counts()
         st.text(s)
 
