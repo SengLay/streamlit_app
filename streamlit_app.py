@@ -1275,7 +1275,7 @@ def get_pdf_download_link_report(file_path):
     with open(file_path, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode("utf-8")
 
-    download_link = f'<a href="data:application/pdf;base64,{base64_pdf}" download="report_file.pdf">Click here to download the PDF file</a>'
+    download_link_report = f'<a href="data:application/pdf;base64,{base64_pdf}" download="report_file.pdf">Click here to download the PDF file</a>'
     return download_link_report
 
 # Guideline
@@ -1293,7 +1293,7 @@ def get_pdf_download_link_guideline(file_path):
     with open(file_path, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode("utf-8")
 
-    download_link = f'<a href="data:application/pdf;base64,{base64_pdf}" download="report_file.pdf">Click here to download the PDF file</a>'
+    download_link_guideline = f'<a href="data:application/pdf;base64,{base64_pdf}" download="report_file.pdf">Click here to download the PDF file</a>'
     return download_link_guideline
 
 st.markdown("""<div id="report"></div>""", unsafe_allow_html=True)
