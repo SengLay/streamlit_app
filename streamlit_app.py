@@ -1260,8 +1260,8 @@ def EDA_Salary():
         subplots_sal()
 EDA_Salary()
 
-# Show pdf: report and guideline
-def show_pdf(pdf_file):
+# Report
+def show_pdf_report(pdf_file):
     with open(pdf_file, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode('utf-8')
 
@@ -1269,21 +1269,39 @@ def show_pdf(pdf_file):
     temp_file.write(base64.b64decode(base64_pdf))
     temp_file.close()
 
-    st.markdown(get_pdf_download_link(temp_file.name), unsafe_allow_html=True)
+    st.markdown(get_pdf_download_link_report(temp_file.name), unsafe_allow_html=True)
     
-def get_pdf_download_link(file_path):
+def get_pdf_download_link_report(file_path):
     with open(file_path, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode("utf-8")
 
-    download_link = f'<a href="data:application/pdf;base64,{base64_pdf}" download="downloaded_file.pdf">Click here to download the PDF file</a>'
-    return download_link
+    download_link = f'<a href="data:application/pdf;base64,{base64_pdf}" download="report_file.pdf">Click here to download the PDF file</a>'
+    return download_link_report
+
+# Guideline
+def show_pdf_guideline(pdf_file):
+    with open(pdf_file, "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+
+    temp_file = tempfile.NamedTemporaryFile(delete=False)
+    temp_file.write(base64.b64decode(base64_pdf))
+    temp_file.close()
+
+    st.markdown(get_pdf_download_link_guideline(temp_file.name), unsafe_allow_html=True)
+    
+def get_pdf_download_link_guideline(file_path):
+    with open(file_path, "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode("utf-8")
+
+    download_link = f'<a href="data:application/pdf;base64,{base64_pdf}" download="report_file.pdf">Click here to download the PDF file</a>'
+    return download_link_guideline
 
 st.markdown("""<div id="report"></div>""", unsafe_allow_html=True)
 st.markdown("👇 Job Analysis Report | Click the link down below to download 📑")
 # st.markdown("<div style='font-size: 30px';><center><b>Job Analysis Report</b></center></div>", unsafe_allow_html=True)
-show_pdf("PDF Report/Report.pdf")
+show_pdf_report("PDF Report/Report.pdf")
 
 st.markdown("""<div id="guideline"></div>""", unsafe_allow_html=True)
 st.markdown("👇 Job Analysis Guideline | Click the link down below to download 📑")
 # st.markdown("<div style='font-size: 30px';><center><b>Job Analysis Guideline</b></center></div>", unsafe_allow_html=True)
-show_pdf("PDF Report/Guideline.pdf")
+show_pdf_guideline("PDF Report/Guideline.pdf")
