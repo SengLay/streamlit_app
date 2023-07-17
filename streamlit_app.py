@@ -1263,13 +1263,24 @@ EDA_Salary()
 def show_pdf(pdf_file):
     with open(pdf_file, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-    pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="700" height="1000" type="application/pdf">'
-    st.markdown(pdf_display, unsafe_allow_html=True)
+
+    temp_file = tempfile.NamedTemporaryFile(delete=False)
+    temp_file.write(base64.b64decode(base64_pdf))
+    temp_file.close()
+
+    st.markdown(get_pdf_download_link(temp_file.name), unsafe_allow_html=True)
+    
+def get_pdf_download_link(file_path):
+    with open(file_path, "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode("utf-8")
+
+    download_link = f'<a href="data:application/pdf;base64,{base64_pdf}" download="downloaded_file.pdf">Click here to download the PDF file</a>'
+    return download_link
 
 st.markdown("""<div id="report"></div>""", unsafe_allow_html=True)
-st.markdown("<div style='font-size: 30px';><center><b>Job Analysis Report</b></center></div>", unsafe_allow_html=True)
+# st.markdown("<div style='font-size: 30px';><center><b>Job Analysis Report</b></center></div>", unsafe_allow_html=True)
 show_pdf("PDF Report/Report.pdf")
 
 st.markdown("""<div id="guideline"></div>""", unsafe_allow_html=True)
-st.markdown("<div style='font-size: 30px';><center><b>Job Analysis Guideline</b></center></div>", unsafe_allow_html=True)
+# st.markdown("<div style='font-size: 30px';><center><b>Job Analysis Guideline</b></center></div>", unsafe_allow_html=True)
 show_pdf("PDF Report/Guideline.pdf")
