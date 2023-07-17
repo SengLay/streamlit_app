@@ -1260,12 +1260,12 @@ def EDA_Salary():
 EDA_Salary()
 
 
-def show_pdf(file_path):
+def show_pdfV2(file_path):
     with open(file_path, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode('utf-8')
 
     pdf_display = f'<center><embed src="data:application/pdf;base64,{base64_pdf}" width="700" height="800" type="application/pdf"></embed></center>'
-    st.markdown(file_path, unsafe_allow_html=True)
+    st.markdown(pdf_display, unsafe_allow_html=True)
 
 st.markdown("""<div id="report"></div>""", unsafe_allow_html=True)
 st.markdown("<div style='font-size: 30px';><center><b>Job Analysis Report</b></center></div>", unsafe_allow_html=True)
