@@ -1284,6 +1284,6 @@ st.markdown("👇 <div style='font-size: 30px';><b>Job Analysis Report | Click t
 show_pdf("PDF Report/Report.pdf")
 
 st.markdown("""<div id="guideline"></div>""", unsafe_allow_html=True)
-st.markdown("👇 <div style='font-size: 30px';><b>Job Analysis Guideline | Click the link down below to download</b></div> 📑📚")
+st.markdown("👇" + " <div style='font-size: 30px';><b>Job Analysis Guideline | Click the link down below to download</b></div>" + "📑📚")
 # st.markdown("<div style='font-size: 30px';><center><b>Job Analysis Guideline</b></center></div>", unsafe_allow_html=True)
 show_pdf("PDF Report/Guideline.pdf")
