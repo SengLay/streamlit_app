@@ -33,6 +33,7 @@ def table_of_content():
     st.sidebar.write("[5.7. Salary](#salary)")
     st.sidebar.markdown("[Project Report](#report)")
     st.sidebar.markdown("[Project Guideline](#guideline)")
+    st.sidebar.markdown("[THANKS FOR VISITING US! HAVE A NICE DAY!]")
 table_of_content()
 
 def img_to_bytes(img_path):
