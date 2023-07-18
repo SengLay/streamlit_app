@@ -5,13 +5,32 @@ import base64
 import io
 import os
 import tempfile
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn import preprocessing
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+from sklearn.feature_selection import SelectKBest, chi2
+# from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+import itertools
+import matplotlib.pyplot as plt
+from sklearn.feature_selection import RFE
+# from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import accuracy_score
+import seaborn as sns
 
 def table_of_content():
     # Table of Content
     st.sidebar.title("Table of Contents")
+
     st.sidebar.write("[1. Introduction](#introduction)")
+
     st.sidebar.write("[2. Group Members](#group-members)")
+
     st.sidebar.write("[3. Objectives of Job Prediction Project](#objectives)")
+
     st.sidebar.write("[4. Data Exploration](#data-exploration)")
     st.sidebar.write("[4.1. Importing Python Language Libraries](#import-dataset)")
     st.sidebar.write("[4.2. The Original Dataset AllPhnomList.csv File](#origin-dataset)")
@@ -23,6 +42,7 @@ def table_of_content():
     st.sidebar.write("[4.4.1. Missing Values](#missing-vals)")
     st.sidebar.write("[4.4.2. Duplicated Values](#dup-vals)")
     st.sidebar.write("[4.4.3. Outlier](#outlier)")
+
     st.sidebar.write("[5. Exploratory Data Analysis (EDA)](#eda)")
     st.sidebar.write("[5.1. Job Type](#job-type)")
     st.sidebar.write("[5.2. Position Level](#pos-lvl)")
@@ -31,6 +51,21 @@ def table_of_content():
     st.sidebar.write("[5.5. Qualification](#qualification)")
     st.sidebar.write("[5.6. Age](#age)")
     st.sidebar.write("[5.7. Salary](#salary)")
+
+    st.sidebar.write("[6. Feature Engineering](#feat-engineering)")
+    st.sidebar.write("[6.1. Pre-Processing](#pre-processing)")
+
+    st.sidebar.write("[7. Model Building](#model-building)")
+    st.sidebar.write("[7.1. Train Split Test](#train_split)")
+    st.sidebar.write("[7.2. Classification](#classification)")
+    st.sidebar.write("[7.3. Accuracy Evaluation](#accuracy-evaluation)")
+
+    st.sidebar.write("[8. Feature Selection](#feat-selection)")
+
+    st.sidebar.write("[9. SVM (Support Vector Machine) with Scikit-learn](#svm)")
+
+    st.sidebar.write("[10. Gradient Boosting Classifier](#gbc)")
+
     st.sidebar.markdown("[Project Report](#report)")
     st.sidebar.markdown("[Project Guideline](#guideline)")
 table_of_content()
@@ -39,6 +74,7 @@ def img_to_bytes(img_path):
     img_bytes = Path(img_path).read_bytes()
     encoded = base64.b64encode(img_bytes).decode()
     return encoded
+
 
 def load_data(file_path):
     # Use os.path.join to create the file path
@@ -50,7 +86,10 @@ def load_data(file_path):
     else:
         st.error("File not found: {}".format(data_path))
 
+
 outlier_path = load_data("Photo/outlier.png")
+
+
 def outlier():
     outlier_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=700><figcaption>Outlier Graph</figcaption></figure></center>".format(
         img_to_bytes(outlier_path)
@@ -59,8 +98,10 @@ def outlier():
     with container:
         st.markdown(outlier_img, unsafe_allow_html=True)
 
+
 # Job Type
 jobtype_1_path = load_data("Photo/jobtype-1.png")
+
 def jobtype_1():
     jobtype1_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Job Type Graph</figcaption></figure></center>".format(
         img_to_bytes(jobtype_1_path)
@@ -69,7 +110,10 @@ def jobtype_1():
     with container:
         st.markdown(jobtype1_img, unsafe_allow_html=True)
 
+
 jobtype_2_path = load_data("Photo/jobtype-2.png")
+
+
 def jobtype_2():
     jobtype2_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=600><figcaption>Job Type Graph</figcaption></figure></center>".format(
         img_to_bytes(jobtype_2_path)
@@ -78,7 +122,10 @@ def jobtype_2():
     with container:
         st.markdown(jobtype2_img, unsafe_allow_html=True)
 
+
 jobtype_3_path = load_data("Photo/jobtype-3.png")
+
+
 def jobtype_3():
     jobtype3_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=600><figcaption>Job Type Graph</figcaption></figure></center>".format(
         img_to_bytes(jobtype_3_path)
@@ -87,8 +134,11 @@ def jobtype_3():
     with container:
         st.markdown(jobtype3_img, unsafe_allow_html=True)
 
+
 # Position Level
 pos_1_path = load_data("Photo/poslevel-1.png")
+
+
 def poslevel_1():
     poslevel1_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=600><figcaption>Distribution of Position Level Graph</figcaption></figure></center>".format(
         img_to_bytes(pos_1_path)
@@ -97,7 +147,10 @@ def poslevel_1():
     with container:
         st.markdown(poslevel1_img, unsafe_allow_html=True)
 
+
 pos_2_path = load_data("Photo/poslevel_vs_sal.png")
+
+
 def poslevel_vs_sal():
     poslevel_sal_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=600><figcaption>Distribution of Position Level Graph with Salary</figcaption></figure></center>".format(
         img_to_bytes(pos_2_path)
@@ -106,8 +159,11 @@ def poslevel_vs_sal():
     with container:
         st.markdown(poslevel_sal_img, unsafe_allow_html=True)
 
+
 # Location
 loc_1_path = load_data("Photo/loc_freq.png")
+
+
 def loc_freq_count():
     loc_freq = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=600><figcaption>Location Frequency Count</figcaption></figure></center>".format(
         img_to_bytes(loc_1_path)
@@ -116,7 +172,10 @@ def loc_freq_count():
     with container:
         st.markdown(loc_freq, unsafe_allow_html=True)
 
+
 loc_2_path = load_data("Photo/abbre_loc.png")
+
+
 def abbrev_loc():
     loc_abbre = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Distributions of Location after Abbreviation</figcaption></figure></center>".format(
         img_to_bytes(loc_2_path)
@@ -125,7 +184,10 @@ def abbrev_loc():
     with container:
         st.markdown(loc_abbre, unsafe_allow_html=True)
 
+
 loc_3_path = load_data("Photo/sal_vs_loc.png")
+
+
 def sal_vs_loc():
     sal_loc_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Relationship between Minimum Salary and Location</figcaption></figure></center>".format(
         img_to_bytes(loc_3_path)
@@ -134,8 +196,11 @@ def sal_vs_loc():
     with container:
         st.markdown(sal_loc_img, unsafe_allow_html=True)
 
+
 # Work Experience
 exp_1_path = load_data("Photo/work_exp_dis.png")
+
+
 def work_exp():
     workexp_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Distribution of Working Experience</figcaption></figure></center>".format(
         img_to_bytes(exp_1_path)
@@ -144,8 +209,11 @@ def work_exp():
     with container:
         st.markdown(workexp_img, unsafe_allow_html=True)
 
+
 # Qualification
 qual_1_path = load_data("Photo/qua_dis.png")
+
+
 def qualification_dis():
     qua_dis_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Distribution of Qualification</figcaption></figure></center>".format(
         img_to_bytes(qual_1_path)
@@ -154,7 +222,10 @@ def qualification_dis():
     with container:
         st.markdown(qua_dis_img, unsafe_allow_html=True)
 
+
 qual_2_path = load_data("Photo/qua_vs_sal.png")
+
+
 def qualification_vs_sal():
     qua_vs_sal_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Relationship Between Qualification and Average Minimum Salary</figcaption></figure></center>".format(
         img_to_bytes(qual_2_path)
@@ -163,7 +234,10 @@ def qualification_vs_sal():
     with container:
         st.markdown(qua_vs_sal_img, unsafe_allow_html=True)
 
+
 qual_3_path = load_data("Photo/qua_abbre.png")
+
+
 def qualification_dis_after_abbre():
     qua_vs_sal_abbre_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Distribution of Qualifications</figcaption></figure></center>".format(
         img_to_bytes(qual_3_path)
@@ -172,7 +246,10 @@ def qualification_dis_after_abbre():
     with container:
         st.markdown(qua_vs_sal_abbre_img, unsafe_allow_html=True)
 
+
 age_1_path = load_data("Photo/age.png")
+
+
 def age_dis():
     age_dis_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Distribution of Minimum Ages</figcaption></figure></center>".format(
         img_to_bytes(age_1_path)
@@ -181,7 +258,10 @@ def age_dis():
     with container:
         st.markdown(age_dis_img, unsafe_allow_html=True)
 
+
 age_2_path = load_data("Photo/age_sal.png")
+
+
 def age_vs_sal():
     age_vs_sal_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Relationship between Minimum Age and Average Minimum Salary</figcaption></figure></center>".format(
         img_to_bytes(age_2_path)
@@ -190,8 +270,11 @@ def age_vs_sal():
     with container:
         st.markdown(age_vs_sal_img, unsafe_allow_html=True)
 
+
 # Salary
 sal_1_path = load_data("Photo/min_sal_dis.png")
+
+
 def sal_dis():
     sal_dis_img = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Distribution of Minimum Salaries</figcaption></figure></center>".format(
         img_to_bytes(sal_1_path)
@@ -200,7 +283,10 @@ def sal_dis():
     with container:
         st.markdown(sal_dis_img, unsafe_allow_html=True)
 
+
 sal_2_path = load_data("Photo/pairwise_sal.png")
+
+
 def pairwise_sal():
     pair_sal = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Pairwise Scatter Plot</figcaption></figure></center>".format(
         img_to_bytes(sal_2_path)
@@ -209,7 +295,10 @@ def pairwise_sal():
     with container:
         st.markdown(pair_sal, unsafe_allow_html=True)
 
+
 sal_3_path = load_data("Photo/boxplot_cat_vars.png")
+
+
 def boxplot_cat_sal():
     box_cat_sal = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Boxplot For Categorical Variables</figcaption></figure></center>".format(
         img_to_bytes(sal_3_path)
@@ -218,7 +307,10 @@ def boxplot_cat_sal():
     with container:
         st.markdown(box_cat_sal, unsafe_allow_html=True)
 
+
 sal_4_path = load_data("Photo/pair_age_sal.png")
+
+
 def pairwise_age_sal():
     pair_age_sal = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Relationship between Minimum Age and Minimum Salary</figcaption></figure></center>".format(
         img_to_bytes(sal_4_path)
@@ -227,7 +319,10 @@ def pairwise_age_sal():
     with container:
         st.markdown(pair_age_sal, unsafe_allow_html=True)
 
+
 sal_5_path = load_data("Photo/subplots_sal.png")
+
+
 def subplots_sal():
     sub_sal = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Subplots with Minimum Salary</figcaption></figure></center>".format(
         img_to_bytes(sal_5_path)
@@ -235,6 +330,25 @@ def subplots_sal():
     container = st.container()
     with container:
         st.markdown(sub_sal, unsafe_allow_html=True)
+
+
+def confusion():
+    con_mat = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption></figcaption></figure></center>".format(
+        img_to_bytes("Photo/confusion_matrices.png")
+    )
+    container = st.container()
+    with container:
+        st.markdown(con_mat, unsafe_allow_html=True)
+
+
+def feat_importance():
+    f_imp = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=650><figcaption>Features Importances</figcaption></figure></center>".format(
+        img_to_bytes("Photo/feat_imp.png")
+    )
+    container = st.container()
+    with container:
+        st.markdown(f_imp, unsafe_allow_html=True)
+
 
 def image():
     itc_path = load_data("Photo/itc.png")
@@ -258,7 +372,10 @@ def image():
             st.markdown(header_html_1, unsafe_allow_html=True)
         with col3:
             st.markdown(header_html_3, unsafe_allow_html=True)
+
+
 image()
+
 
 def welcome_project_description():
     # Welcome Statement & Project Description
@@ -288,6 +405,8 @@ def welcome_project_description():
         <b>GitHub Source Code for Job Prediction:</b> <i><b>[Click Here!](https://github.com/SengLay/Job-Analysis)</b></i></div>
         ''', unsafe_allow_html=True
     )
+
+
 welcome_project_description()
 lay_path = load_data("Photo/lay copy.jpg")
 lay = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=300><figcaption></figcaption></figure></center>".format(
@@ -311,13 +430,14 @@ kimmeng = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid'
     img_to_bytes("Photo/kimmeng.jpg")
 )
 
+
 def members():
     # Group Members Image and Background
     st.markdown("""<div id="group-members"></div>""", unsafe_allow_html=True)
     st.header("2. Group Members")
     with st.expander("CLICK HERE TO SEE OUR GROUP MEMBERS", expanded=True):
-
-        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["SENG Lay", "VANNAK Vireakyuth", "YA Manon", "VANN Visal", "TAING Kimmeng", "VINLAY Anusar"])
+        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
+            ["SENG Lay", "VANNAK Vireakyuth", "YA Manon", "VANN Visal", "TAING Kimmeng", "VINLAY Anusar"])
         with tab1:
             st.markdown("<div style='font-size: 40px';><center><b>SENG Lay</b></center></div>",
                         unsafe_allow_html=True)
@@ -358,7 +478,10 @@ def members():
             st.markdown(anusar, unsafe_allow_html=True)
             st.markdown("<div style='font-size: 25px';><center><b>Member</b></center></div>",
                         unsafe_allow_html=True)
+
+
 members()
+
 
 def obj():
     # Objective of project
@@ -379,8 +502,11 @@ def obj():
         * Gain a competitive edge in the job market by adapting compensation strategies to attract and retain top talent.
         '''
     )
+
+
 obj()
 
+df = pd.read_csv('CSV/data2.csv')
 def data_exploration_4():
     ### Data Exploration ###
     st.write("## `LET'S DIVE INTO OUR PROJECT!`")
@@ -402,7 +528,6 @@ def data_exploration_4():
             import seaborn as sns
             import matplotlib.pyplot as plt
             %matplotlib inline
-            import statsmodels.api as sm 
             from sklearn import metrics
             from sklearn.preprocessing import MinMaxScaler
             from sklearn.model_selection import train_test_split
@@ -420,7 +545,7 @@ def data_exploration_4():
 
     # Load dataset
     st.markdown("""<div id="origin-dataset"></div>""", unsafe_allow_html=True)
-    st.subheader('4.2. The Original Dataset `AllPhnomList.csv` file')
+    st.subheader('4.2. The Original Dataset `AllPhnomList.csv` File')
     with st.expander("CLICK HERE TO SHOW DATA"):
         st.code(
             '''
@@ -433,7 +558,6 @@ def data_exploration_4():
             This is the original dataset of our project.
             """
         )
-        df = pd.read_csv('CSV/data2.csv')
         st.dataframe(df)
 
     # Describe the whole dataset
@@ -450,8 +574,7 @@ def data_exploration_4():
             Take a look at the desciption of our dataset here.
             """
         )
-        list_stats = df.describe()
-        st.dataframe(list_stats)
+        st.dataframe(df.describe())
 
     # Dataset Info
     st.markdown("""<div id="info-data"></div>""", unsafe_allow_html=True)
@@ -511,6 +634,8 @@ def data_exploration_4():
         num_features, len(num_features)
         st.text(f"Numerical Features: {num_features}")
         st.text(f"Length of Numerical Features: {len(num_features)}")
+
+
 data_exploration_4()
 
 def data_cleaning():
@@ -530,14 +655,14 @@ def data_cleaning():
             df.isnull().sum()
             ''', language='python'
         )
+        df.drop(columns=['Salary_max', 'max_age'], inplace=True, axis=1)
+
         st.write(
             """
             Take a look at the result after checking.
             """
         )
-        df = pd.read_csv('CSV/data2.csv')
-        s = df.isnull().sum()
-        st.text(s)
+        st.text(df.isnull().sum())
 
     ### 4.4.2
     st.markdown("""<div id="dup-vals"></div>""", unsafe_allow_html=True)
@@ -550,8 +675,7 @@ def data_cleaning():
             ''', language='python'
         )
 
-        duplicated_sum = df.duplicated().sum()
-        st.text(f'Duplicated values: {duplicated_sum}')
+        st.text(f'Duplicated values: {df.duplicated().sum()}')
 
         st.code(
             '''
@@ -559,6 +683,7 @@ def data_cleaning():
             df.drop_duplicates(inplace= True)
             ''', language='python'
         )
+        df.drop_duplicates(inplace=True)
 
     ### 4.4.3
     st.markdown("""<div id="outlier"></div>""", unsafe_allow_html=True)
@@ -579,7 +704,10 @@ def data_cleaning():
             """
         )
         outlier()
+
+
 data_cleaning()
+
 
 def EDA_JobType():
     st.markdown("""<div id="eda"></div>""", unsafe_allow_html=True)
@@ -603,9 +731,7 @@ def EDA_JobType():
             Take a look at the result after checking.
             """
         )
-        df = pd.read_csv('CSV/data2.csv')
-        s = df.Salary_min.value_counts()
-        st.text(s)
+        st.text(df.Salary_min.value_counts())
 
         # Distribution of Job Type
         st.write('##### Distribution of each Job Type')
@@ -680,7 +806,10 @@ def EDA_JobType():
             ''', language='python'
         )
         jobtype_3()
+
+
 EDA_JobType()
+
 
 def EDA_PositionLevel():
     st.markdown("""<div id="pos-lvl"></div>""", unsafe_allow_html=True)
@@ -698,9 +827,7 @@ def EDA_PositionLevel():
             Take a look at the result after checking.
             """
         )
-        df = pd.read_csv('CSV/data2.csv')
-        s = df.PositionLevel.value_counts()
-        st.text(s)
+        st.text(df.PositionLevel.value_counts())
 
         # Position Level
         st.write('##### Distribution of Position Levels')
@@ -770,9 +897,7 @@ def EDA_Location():
             Take a look at the result after checking.
             """
         )
-        df = pd.read_csv('CSV/data2.csv')
-        s = df.Location.value_counts()
-        st.text(s)
+        st.text(df.Location.value_counts())
 
         # Location and Frequency Count
         st.write('##### Location Frequency Count')
@@ -839,6 +964,28 @@ def EDA_Location():
             })
             ''', language='python'
         )
+        df_replaced = df.replace({
+            'Phnom Penh': 'PP',
+            'Preah Sihanouk': 'PS',
+            'Battambang': 'BB',
+            'Siem Reap': 'SR',
+            'Bavet': 'BV',
+            'Poipet': 'PPt',
+            'Kampong Speu': 'KS',
+            'Kampot': 'KPT',
+            'Kandal': 'KDL',
+            'Kampong Cham': 'KC',
+            'Svay Rieng': 'SR',
+            'Mondulkiri': 'MDK',
+            'Banteay Meanchey': 'BMC',
+            'Preah Vihear': 'PV',
+            'Pursat': 'PS',
+            'Kampong Chhnang': 'KCN',
+            'Koh Kong': 'KK',
+            'Cambodia': 'CM',
+            'Kampong Thom': 'KT',
+            'Tbong Khmum': 'TK'
+        })
 
         # Replace location to short letters
         st.write('##### Plotting Location after replaced to abbreviation')
@@ -893,7 +1040,10 @@ def EDA_Location():
             ''', language='python'
         )
         sal_vs_loc()
+
+
 EDA_Location()
+
 
 def EDA_Work_Exp():
     st.markdown("""<div id="work-exp"></div>""", unsafe_allow_html=True)
@@ -911,42 +1061,43 @@ def EDA_Work_Exp():
             Take a look at the result after checking.
             """
         )
-        df = pd.read_csv('CSV/data2.csv')
-        s = df.WorkingExperience.value_counts()
-        st.text(s)
+        st.text(df.WorkingExperience.value_counts())
 
         st.write("##### Distribution of Working Experience")
         st.code(
             '''
             working_experience_counts = df.WorkingExperience.value_counts()
-    
+
             # Set the style of the plot
             sns.set(style="whitegrid")
-    
+
             # Create a bar plot using seaborn
             plt.figure(figsize=(8, 6))  # Set the figure size
             ax = sns.barplot(x=working_experience_counts.index, y=working_experience_counts.values)
-    
+
             # Add labels and title
             plt.xlabel("Working Experience", fontsize=12)
             plt.ylabel("Count", fontsize=12)
             plt.title("Distribution of Working Experience", fontsize=14)
-    
+
             # Rotate the x-axis labels for better readability
             plt.xticks(rotation=0)
-    
+
             # Add value labels to the bars
             for p in ax.patches:
                 ax.annotate(f"{p.get_height()}", (p.get_x() + p.get_width() / 2., p.get_height()),
                              ha='center', va='center', xytext=(0, 5), textcoords='offset points')
-    
+
             # Display the plot
             plt.tight_layout()
             plt.show()
             ''', language='python'
         )
         work_exp()
+
+
 EDA_Work_Exp()
+
 
 def EDA_Qualification():
     st.markdown("""<div id="qualification"></div>""", unsafe_allow_html=True)
@@ -964,9 +1115,7 @@ def EDA_Qualification():
             Take a look at the result after checking.
             """
         )
-        df = pd.read_csv('CSV/data2.csv')
-        s = df.Qualification.value_counts()
-        st.text(s)
+        st.text(df.Qualification.value_counts())
 
         # Location and Frequency Count
         st.write('##### Distribution of Qualification')
@@ -1061,7 +1210,10 @@ def EDA_Qualification():
             ''', language='python'
         )
         qualification_dis_after_abbre()
+
+
 EDA_Qualification()
+
 
 def EDA_Age():
     st.markdown("""<div id="age"></div>""", unsafe_allow_html=True)
@@ -1079,9 +1231,7 @@ def EDA_Age():
             Take a look at the result after checking.
             """
         )
-        df = pd.read_csv('CSV/data2.csv')
-        s = df.min_age.value_counts()
-        st.text(s)
+        st.text(df.min_age.value_counts())
 
         # Age Distribution
         st.write('##### Distribution of Minimum Age')
@@ -1131,7 +1281,10 @@ def EDA_Age():
             ''', language='python'
         )
         age_vs_sal()
+
+
 EDA_Age()
+
 
 def EDA_Salary():
     st.markdown("""<div id="salary"></div>""", unsafe_allow_html=True)
@@ -1149,9 +1302,7 @@ def EDA_Salary():
             Take a look at the result after checking.
             """
         )
-        df = pd.read_csv('CSV/data2.csv')
-        s = df.Salary_min.value_counts()
-        st.text(s)
+        st.text(df.Salary_min.value_counts())
 
         st.write('##### Distribution of Minimum Salaries')
         st.code(
@@ -1260,6 +1411,729 @@ def EDA_Salary():
         subplots_sal()
 EDA_Salary()
 
+def feature_engineering():
+    st.markdown("""<div id="feat-engineering"></div>""", unsafe_allow_html=True)
+    st.header("6. Feature Engineering")
+    st.markdown("""<div id="pre-processing"></div>""", unsafe_allow_html=True)
+    st.subheader("6.1. Pre-Processing")
+    with st.expander("CLICK HERE TO SHOW DATA"):
+        st.write('##### Qualification')
+        st.code(
+            '''
+            # Define the ranges for qualification
+            ranges = {
+                'No': 0,
+                'Others':0,
+                'Diploma': 1,
+                'Associate': 3,
+                'Bacc2': 2,
+                'Bachelor': 4,
+                'Master': 5,
+                'Professional': 6,
+                'Train': 2.5
+            }
+            
+            # Convert Qualification to numerical ranges
+            df['Qualification'] = df['Qualification'].map(ranges)
+            ''', language='python'
+        )
+        st.write('##### Job Type')
+        st.code(
+            '''
+            # Define the ranges for JobType
+            ranges = {
+                'Full Time': 3,
+                'Temporary Contract': 2,
+                'Part Time': 1
+            }
+            
+            # Convert JobType to numerical ranges
+            df['JobType'] = df['JobType'].map(ranges)
+            ''', language='python'
+        )
+        st.write('##### Position Level')
+        st.code(
+            '''
+            # Define the ranges for PositionLevel
+            ranges = {
+                'Kindergarten': 1,
+                'Fresh': 2,
+                'Junior Executive': 4,
+                'Non-Executive': 3,
+                'Senior Executive': 5,
+                'Manager': 6,
+                'Senior Manager': 7
+            }
+            
+            # Convert PositionLevel to numerical ranges
+            df['PositionLevel'] = df['PositionLevel'].map(ranges)
+            ''', language='python'
+        )
+        st.write('##### Location')
+        st.code(
+            '''
+            # Define the ranges for Location
+            ranges = {
+                'Cambodia': 1,
+                'Phnom Penh': 20,
+                'Preah Sihanouk': 19,
+                'Battambang': 4,
+                'Siem Reap': 5,
+                'Bavet': 6,
+                'Poipet': 7,
+                'Kampong Speu': 8,
+                'Kampot': 9,
+                'Kandal': 10,
+                'Kampong Cham': 11,
+                'Svay Rieng': 18,
+                'Mondulkiri': 13,
+                'Banteay Meanchey': 14,
+                'Preah Vihear': 15,
+                'Pursat': 16,
+                'Kampong Chhnang': 17,
+                'Koh Kong': 18,
+                'Kampong Thom': 19,
+                'Tbong Khmum': 21
+            }
+            
+            # Convert Location to numerical ranges
+            df['Location'] = df['Location'].map(ranges)
+            ''', language='python'
+        )
+        st.write('##### Salary')
+        st.code(
+            '''
+            ranges = {
+                (200, 500): 0,
+                (500, 1000): 1,
+                (1000, 1500): 2,
+                (1500, np.inf): 3
+            }
+            
+            # Convert Salary_min to numerical representations
+            df['Salary_min'] = pd.cut(df['Salary_min'], bins=[200, 500, 1000, 1500, np.inf], labels=[0, 1, 2, 3])
+            
+            # Convert the datatype to int
+            df['Salary_min'] = df['Salary_min'].astype(int)
+            ''', language='python'
+        )
+feature_engineering()
+
+# st.sidebar.write("[7. Model Building](#model-building)")
+# st.sidebar.write("[7.1. Train Split Test](#train_split)")
+# st.sidebar.write("[7.2. Classification](#classification)")
+# st.sidebar.write("[7.2.1. K Nearest Neighbor (KNN)](#knn)")
+def pre_qual():
+    # Define the ranges for qualification
+    ranges = {
+        'No': 0,
+        'Others': 0,
+        'Diploma': 1,
+        'Associate': 3,
+        'Bacc2': 2,
+        'Bachelor': 4,
+        'Master': 5,
+        'Professional': 6,
+        'Train': 2.5
+    }
+    # Convert Qualification to numerical ranges
+    df['Qualification'] = df['Qualification'].map(ranges)
+
+def pre_jobtype():
+    # Define the ranges for JobType
+    ranges = {
+        'Full Time': 3,
+        'Temporary Contract': 2,
+        'Part Time': 1
+    }
+    # Convert JobType to numerical ranges
+    df['JobType'] = df['JobType'].map(ranges)
+
+def pre_poslvl():
+    # Define the ranges for PositionLevel
+    ranges = {
+        'Kindergarten': 1,
+        'Fresh': 2,
+        'Junior Executive': 4,
+        'Non-Executive': 3,
+        'Senior Executive': 5,
+        'Manager': 6,
+        'Senior Manager': 7
+    }
+
+    # Convert PositionLevel to numerical ranges
+    df['PositionLevel'] = df['PositionLevel'].map(ranges)
+
+def pre_loc():
+    # Define the ranges for Location
+    ranges = {
+        'Cambodia': 1,
+        'Phnom Penh': 20,
+        'Preah Sihanouk': 19,
+        'Battambang': 4,
+        'Siem Reap': 5,
+        'Bavet': 6,
+        'Poipet': 7,
+        'Kampong Speu': 8,
+        'Kampot': 9,
+        'Kandal': 10,
+        'Kampong Cham': 11,
+        'Svay Rieng': 18,
+        'Mondulkiri': 13,
+        'Banteay Meanchey': 14,
+        'Preah Vihear': 15,
+        'Pursat': 16,
+        'Kampong Chhnang': 17,
+        'Koh Kong': 18,
+        'Kampong Thom': 19,
+        'Tbong Khmum': 21
+    }
+    # Convert Location to numerical ranges
+    df['Location'] = df['Location'].map(ranges)
+
+def pre_salary():
+    ranges = {
+        (200, 500): 0,
+        (500, 1000): 1,
+        (1000, 1500): 2,
+        (1500, np.inf): 3
+    }
+    # Convert Salary_min to numerical representations
+    df['Salary_min'] = pd.cut(df['Salary_min'], bins=[200, 500, 1000, 1500, np.inf], labels=[0, 1, 2, 3])
+
+    # Convert the datatype to int
+    df['Salary_min'] = df['Salary_min'].astype(int)
+
+def train_split():
+    y = df['Salary_min']
+    X = df.drop(columns='Salary_min', axis=1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4)
+    return f'Train set: {X_train.shape}, {y_train.shape} \n' \
+           f'Test set: {X_test.shape}, {y_test.shape}'
+
+st.markdown("""<div id="model-building"></div>""", unsafe_allow_html=True)
+st.header("7. Model Building")
+st.markdown("""<div id="train_split"></div>""", unsafe_allow_html=True)
+st.subheader('7.1. Train Split Test')
+with st.expander("CLICK HERE TO SHOW DATA"):
+    st.code(
+        '''
+        from sklearn.model_selection import train_test_split
+        y = df.Salary_min
+        X = df.drop(columns='Salary_min', axis = 1)
+        X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=4)
+        print('Train set:', X_train.shape,  y_train.shape)
+        print('Test set:', X_test.shape,  y_test.shape)
+        ''', language='python'
+    )
+    s = train_split()
+    st.text(s)
+st.markdown("""<div id="classification"></div>""", unsafe_allow_html=True)
+st.subheader('7.2. Classification')
+with st.expander("CLICK HERE TO SHOW DATA"):
+    st.write('''
+    #### 7.2.1. K Nearest Neighbor (KNN)
+
+    ##### What about other K?
+
+    K in KNN, is the number of nearest neighbors to examine. It is supposed to be specified by the user. 
+    So, how can we choose right value for K? The general solution is to reserve a part of your data for testing the 
+    accuracy of the model. Then choose k =1, use the training part for modeling, and calculate the accuracy of prediction 
+    using all samples in your test set. Repeat this process, increasing the k, and see which k is the best for your model.
+    We can calculate the accuracy of KNN for different values of k.
+
+    Classifier implementing the k-nearest neighbors vote.
+    ''')
+    st.code(
+        '''
+        df.head()
+        ''', language='python'
+    )
+    pre_qual()
+    pre_jobtype()
+    pre_poslvl()
+    pre_loc()
+    pre_salary()
+    st.table(df.head())
+    st.code(
+        '''
+        from sklearn import preprocessing
+        X_train_norm = preprocessing.StandardScaler().fit(X_train).transform(X_train.astype(float))
+        X_train_norm[0:5]
+        ''', language='python'
+    )
+    y = df['Salary_min']
+    X = df.drop(columns='Salary_min', axis=1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4)
+    X_train_norm = preprocessing.StandardScaler().fit(X_train).transform(X_train.astype(float))
+    st.table(X_train_norm[0:5])
+    st.code(
+        '''
+        from sklearn.neighbors import KNeighborsClassifier
+        # Train Model and Predict 
+        neigh = KNeighborsClassifier(n_neighbors = 3).fit(X_train_norm,y_train)
+        neigh
+        ''', language='python'
+        )
+    # Train Model and Predict
+    neigh = KNeighborsClassifier(n_neighbors=3).fit(X_train_norm, y_train)
+    st.write(neigh)
+    st.write(
+        '''
+        ##### Predicting
+        We can use the model to make predictions on the test set:
+        '''
+    )
+    st.code(
+        '''
+        X_test_norm = preprocessing.StandardScaler().fit(X_test).transform(X_test.astype(float))
+        X_test_norm[0:5]    
+        ''', language='python'
+    )
+    X_test_norm = preprocessing.StandardScaler().fit(X_test).transform(X_test.astype(float))
+    st.table(X_test_norm[0:5])
+    st.code(
+        '''
+        yhat = neigh.predict(X_test_norm)
+        yhat[0:10]
+        ''', language='python'
+    )
+    yhat = neigh.predict(X_test_norm)
+    st.dataframe(yhat[0:10])
+
+st.markdown("""<div id="accuracy-evaluation"></div>""", unsafe_allow_html=True)
+st.subheader('7.3. Accuracy Evaluation')
+with st.expander("CLICK HERE TO SHOW DATA"):
+    st.write(
+        '''
+        In multilabel classification, accuracy classification score is a function that computes subset accuracy. 
+        This function is equal to the jaccard_score function. Essentially, it calculates how closely the actual 
+        labels and predicted labels are matched in the test set.
+        '''
+    )
+    st.code(
+        '''
+        from sklearn import metrics
+        print("Train set Accuracy: ", metrics.accuracy_score(y_train, neigh.predict(X_train_norm)))
+        print("Test set Accuracy: ", metrics.accuracy_score(y_test, yhat))
+        ''', language='python'
+    )
+    st.text(f"Train set Accuracy: {metrics.accuracy_score(y_train, neigh.predict(X_train_norm))}")
+    st.text(f"Test set Accuracy: {metrics.accuracy_score(y_test, yhat)}")
+
+# Fature Selection
+y = df['Salary_min']
+X = df.drop(columns='Salary_min', axis=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4)
+X_train_norm = preprocessing.StandardScaler().fit(X_train).transform(X_train.astype(float))
+# Create a K-Nearest Neighbors classifier
+knn = KNeighborsClassifier(n_neighbors=5)
+# Perform feature selection with SelectKBest using chi-square
+# num_features_to_select= int(input('Input the number of Feature: '))
+num_features_to_select = 4
+selector = SelectKBest(score_func=chi2, k=num_features_to_select)
+X_train_selected = selector.fit_transform(X_train, y_train)
+X_test_selected = selector.transform(X_test)
+# Get the selected feature indices
+selected_feature_indices = selector.get_support(indices=True)
+# Get the names of the selected features
+selected_feature_names = df.drop(columns='Salary_min', axis=1).columns[selected_feature_indices]
+# Train and test the KNN classifier with the selected features
+knn.fit(X_train_selected, y_train)
+accuracy = knn.score(X_test_selected, y_test)
+
+print(f"Selected features: {selected_feature_names}")
+print(f"Feature scores: {selector.scores_[selected_feature_indices]}")
+print(f"Accuracy with {num_features_to_select} features: {accuracy:.2f}")
+
+# Feature Selection
+st.markdown("""<div id="feat-selection"></div>""", unsafe_allow_html=True)
+st.header('8. Feature Selection')
+with st.expander("CLICK HERE TO SHOW DATA"):
+    st.code(
+        '''
+        from sklearn.feature_selection import SelectKBest, chi2
+        from sklearn.feature_selection import RFE
+        # Create a K-Nearest Neighbors classifier
+        knn = KNeighborsClassifier(n_neighbors=5)
+
+        # Perform feature selection with SelectKBest using chi-square
+
+        num_features_to_select=4
+        selector = SelectKBest(score_func=chi2, k=num_features_to_select)
+        X_train_selected = selector.fit_transform(X_train, y_train)
+        X_test_selected = selector.transform(X_test)
+
+        # Get the selected feature indices
+        selected_feature_indices = selector.get_support(indices=True)
+
+        # Get the names of the selected features
+        selected_feature_names = df.drop(columns='Salary_min', axis=1).columns[selected_feature_indices]
+
+        # Train and test the KNN classifier with the selected features
+        knn.fit(X_train_selected, y_train)
+        accuracy = knn.score(X_test_selected, y_test)
+
+        print(f"Selected features: {selected_feature_names}")
+        print(f"Feature scores: {selector.scores_[selected_feature_indices]}")
+        print(f"Accuracy with {num_features_to_select} features: {accuracy:.2f}")
+        ''', language='python'
+    )
+
+    st.text(f"Selected features: {selected_feature_names}")
+    st.text(f"Feature scores: {selector.scores_[selected_feature_indices]}")
+    st.text(f"Accuracy with {num_features_to_select} features: {accuracy:.2f}")
+
+    st.code(
+        '''
+        df.shape
+        ''', language='python'
+    )
+    st.text(df.shape)
+
+def plot_confusion_matrix(cm, classes,
+                             normalize=False,
+                             title='Confusion matrix',
+                             cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+    print(cm)
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
+st.markdown("""<div id="svm"></div>""", unsafe_allow_html=True)
+st.header('9. SVM (Support Vector Machine) with Scikit-learn')
+with st.expander("CLICK HERE TO SHOW DATA"):
+    st.subheader('9.1. SVM with Polynomial Kernel')
+    st.write(
+        '''
+        The SVM algorithm offers a choice of kernel functions for performing its processing. Basically, mapping data 
+        into a higher dimensional space is called kernelling. The mathematical function used for the transformation is 
+        known as the kernel function, and can be of different types, such as:
+
+            1.Linear
+            2.Polynomial
+            3.Radial basis function (RBF)
+            4.Sigmoid
+
+        Each of these functions has its characteristics, its pros and cons, and its equation, but as there's no easy 
+        way of knowing which function performs best with any given dataset. We usually choose different functions in 
+        turn and compare the results. Let's just use the default, RBF (Radial Basis Function) for this lab.
+        '''
+    )
+    y = df['Salary_min']
+    X = df.drop(columns='Salary_min', axis=1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4)
+    X_train_norm = preprocessing.StandardScaler().fit(X_train).transform(X_train.astype(float))
+    st.code(
+        '''
+        from sklearn import svm
+        clf = svm.SVC(kernel='poly')
+        clf.fit(X_train, y_train) 
+        ''', language='python'
+    )
+
+    from sklearn import svm
+    clf = svm.SVC(kernel='poly')
+    st.write(clf.fit(X_train, y_train))
+    st.write('After being fitted, the model can then be used to predict new values:')
+    st.code(
+        '''
+        yhat = clf.predict(X_test)
+        yhat [0:5]
+        ''', language='python'
+    )
+    yhat = clf.predict(X_test)
+    st.write(yhat[0:5])
+    st.subheader('9.2. Evaluation')
+    st.code(
+        '''
+        from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+        import itertools
+        def plot_confusion_matrix(cm, classes,
+                    normalize=False,
+                    title='Confusion matrix',
+                    cmap=plt.cm.Blues):
+            """
+            This function prints and plots the confusion matrix.
+            Normalization can be applied by setting `normalize=True`.
+            """
+            if normalize:
+                cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+                print("Normalized confusion matrix")
+            else:
+                print('Confusion matrix, without normalization')
+    
+            print(cm)
+    
+            plt.imshow(cm, interpolation='nearest', cmap=cmap)
+            plt.title(title)
+            plt.colorbar()
+            tick_marks = np.arange(len(classes))
+            plt.xticks(tick_marks, classes, rotation=45)
+            plt.yticks(tick_marks, classes)
+    
+            fmt = '.2f' if normalize else 'd'
+            thresh = cm.max() / 2.
+            for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+                plt.text(j, i, format(cm[i, j], fmt),
+                        horizontalalignment="center",
+                        color="white" if cm[i, j] > thresh else "black")
+    
+            plt.tight_layout()
+            plt.ylabel('True label')
+            plt.xlabel('Predicted label')
+
+        # Compute confusion matrix
+        cnf_matrix = confusion_matrix(y_test, yhat, labels=[2,4])
+        np.set_printoptions(precision=2)
+
+        print(classification_report(y_test, yhat))
+
+        # Plot non-normalized confusion matrix
+        plt.figure()
+        plot_confusion_matrix(cnf_matrix, classes=['Benign(2)','Malignant(4)'],normalize= False,  title='Confusion matrix')
+        ''', language='python'
+    )
+    # Compute confusion matrix
+    cnf_matrix = confusion_matrix(y_test, yhat, labels=[2, 4])
+    np.set_printoptions(precision=2)
+
+    st.text(classification_report(y_test, yhat))
+    st.text(f'Confusion matrix, without normalization\n{cnf_matrix}')
+
+    # Plot non-normalized confusion matrix
+    plt.figure()
+    plot_confusion_matrix(cnf_matrix,
+                          classes=['Benign(2)', 'Malignant(4)'],
+                          normalize=False,
+                          title='Confusion matrix')
+    # confusion matrix image graph
+    confusion()
+
+    st.code(
+        '''
+        confusion_matrix(y_test, yhat)
+        ''', language='python'
+    )
+    st.text(confusion_matrix(y_test, yhat))
+    st.code(
+        '''
+        accuracy_score(y_test, yhat)
+        ''', language='python'
+    )
+    st.text(accuracy_score(y_test, yhat))
+
+st.markdown("""<div id="gbc"></div>""", unsafe_allow_html=True)
+st.header('10. Gradient Boosting Classifier')
+with st.expander("CLICK HERE TO SHOW DATA"):
+    st.code(
+        '''
+        from sklearn.ensemble import GradientBoostingClassifier
+
+        # Initialize the Gradient Boosting Classifier with default hyperparameters
+        gb_classifier = GradientBoostingClassifier()
+        
+        # Train the model on the training data
+        gb_classifier.fit(X_train_norm, y_train)
+        # Assuming you have also prepared the test data X_test_norm
+        y_pred = gb_classifier.predict(X_test_norm)
+        ''', language='python'
+    )
+    # Initialize the Gradient Boosting Classifier with default hyperparameters
+    gb_classifier = GradientBoostingClassifier()
+
+    # Train the model on the training data
+    gb_classifier.fit(X_train_norm, y_train)
+    # Assuming you have also prepared the test data X_test_norm
+    y_pred = gb_classifier.predict(X_test_norm)
+
+    st.code(
+        '''
+        from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+        # Calculate accuracy
+        accuracy = accuracy_score(y_test, y_pred)
+        print(f"Accuracy: {accuracy:.2f}")
+        
+        # Generate classification report
+        print(classification_report(y_test, y_pred))
+        
+        # Create and display confusion matrix
+        conf_matrix = confusion_matrix(y_test, y_pred)
+        print("Confusion Matrix:")
+        print(conf_matrix)
+        ''', language='python'
+    )
+    # Calculate accuracy
+    accuracy = accuracy_score(y_test, y_pred)
+    st.text(f"Accuracy: {accuracy:.2f}")
+
+    # Generate classification report
+    st.text(classification_report(y_test, y_pred))
+
+    # Create and display confusion matrix
+    conf_matrix = confusion_matrix(y_test, y_pred)
+    st.text("Confusion Matrix:")
+    st.text(conf_matrix)
+
+    st.code(
+        '''
+        from sklearn.feature_selection import RFE
+        from sklearn.ensemble import GradientBoostingClassifier
+        from sklearn.metrics import accuracy_score
+        
+        # Create a GradientBoostingClassifier
+        gb_classifier = GradientBoostingClassifier()
+        
+        # Perform feature selection with RFE
+        num_features_to_select = int(input('Input the number of Feature: '))
+        
+        selector = RFE(gb_classifier, n_features_to_select=num_features_to_select)
+        X_train_selected = selector.fit_transform(X_train, y_train)
+        X_test_selected = selector.transform(X_test)
+        
+        # Get the selected feature indices
+        selected_feature_indices = selector.support_
+        
+        # Get the names of the selected features
+        selected_feature_names = df.drop(columns='Salary_min', axis=1).columns[selected_feature_indices]
+        
+        # Train and test the GradientBoostingClassifier with the selected features
+        gb_classifier.fit(X_train_selected, y_train)
+        y_pred = gb_classifier.predict(X_test_selected)
+        
+        # Calculate accuracy with the selected features
+        accuracy = accuracy_score(y_test, y_pred)
+        
+        print(f"Selected features: {selected_feature_names}")
+        print(f"Feature ranking: {selector.ranking_}")
+        print(f"Accuracy with {num_features_to_select} features: {accuracy:.2f}")
+        ''', language='python'
+    )
+    # Create a GradientBoostingClassifier
+    gb_classifier = GradientBoostingClassifier()
+
+    # Perform feature selection with RFE
+    # num_features_to_select = int(input('Input the number of Feature: '))
+    num_features_to_select = 4
+    selector = RFE(gb_classifier, n_features_to_select=num_features_to_select)
+    X_train_selected = selector.fit_transform(X_train, y_train)
+    X_test_selected = selector.transform(X_test)
+
+    # Get the selected feature indices
+    selected_feature_indices = selector.support_
+
+    # Get the names of the selected features
+    selected_feature_names = df.drop(columns='Salary_min', axis=1).columns[selected_feature_indices]
+
+    # Train and test the GradientBoostingClassifier with the selected features
+    gb_classifier.fit(X_train_selected, y_train)
+    y_pred = gb_classifier.predict(X_test_selected)
+
+    # Calculate accuracy with the selected features
+    accuracy = accuracy_score(y_test, y_pred)
+
+    st.text(f"Selected features: {selected_feature_names}")
+    st.text(f"Feature ranking: {selector.ranking_}")
+    st.text(f"Accuracy with {num_features_to_select} features: {accuracy:.2f}")
+
+    st.code(
+        '''
+        accuracy_score(y_test, y_pred)
+        ''', language='python'
+    )
+    st.text(f"Accuracy test: {accuracy_score(y_test, y_pred)}")
+
+    st.code(
+        '''
+        # Perform feature selection with RFE
+        num_features_to_select = int(input('Input the number of Feature: '))
+        
+        selector = RFE(gb_classifier, n_features_to_select=num_features_to_select)
+        X_train_selected = selector.fit_transform(X_train, y_train)
+        X_test_selected = selector.transform(X_test)
+        
+        # Train and test the GradientBoostingClassifier with the selected features
+        gb_classifier.fit(X_train_selected, y_train)
+        y_pred = gb_classifier.predict(X_test_selected)
+        
+        # Calculate accuracy with the selected features
+        accuracy = accuracy_score(y_test, y_pred)
+        
+        # Get the selected feature names
+        selected_feature_names = df.drop(columns='Salary_min', axis=1).columns[selector.support_]
+        
+        print(f"Selected features: {selected_feature_names}")
+        print(f"Feature ranking: {selector.ranking_}")
+        print(f"Accuracy with {num_features_to_select} features: {accuracy:.2f}")
+        
+        # Get feature importances after RFE
+        feature_importance = pd.Series(gb_classifier.feature_importances_, index=selected_feature_names).sort_values(ascending=False)
+        
+        # Plot the feature importance
+        plt.figure(figsize=(12, 8))
+        plt.title("Feature Importance")
+        ax = sns.barplot(y=feature_importance.index, x=feature_importance.values, palette='dark', orient='h')
+        plt.show()
+        ''', language='python'
+    )
+
+    # Perform feature selection with RFE
+    # num_features_to_select = int(input('Input the number of Feature: '))
+
+    num_features_to_select = 4
+    selector = RFE(gb_classifier, n_features_to_select=num_features_to_select)
+    X_train_selected = selector.fit_transform(X_train, y_train)
+    X_test_selected = selector.transform(X_test)
+
+    # Train and test the GradientBoostingClassifier with the selected features
+    gb_classifier.fit(X_train_selected, y_train)
+    y_pred = gb_classifier.predict(X_test_selected)
+
+    # Calculate accuracy with the selected features
+    accuracy = accuracy_score(y_test, y_pred)
+
+    # Get the selected feature names
+    selected_feature_names = df.drop(columns='Salary_min', axis=1).columns[selector.support_]
+
+    st.text(f"Selected features: {selected_feature_names}")
+    st.text(f"Feature ranking: {selector.ranking_}")
+    st.text(f"Accuracy with {num_features_to_select} features: {accuracy:.2f}")
+
+    # Get feature importance after RFE
+    feature_importance = pd.Series(gb_classifier.feature_importances_, index=selected_feature_names).sort_values(
+        ascending=False)
+
+    # Plot the feature importance
+    plt.figure(figsize=(12, 8))
+    plt.title("Feature Importance")
+    ax = sns.barplot(y=feature_importance.index, x=feature_importance.values, palette='dark', orient='h')
+    plt.show()
+
+    # feature importance image function
+    feat_importance()
+
 # Report
 def show_pdf_report(pdf_file):
     with open(pdf_file, "rb") as f:
@@ -1270,13 +2144,15 @@ def show_pdf_report(pdf_file):
     temp_file.close()
 
     st.markdown(get_pdf_download_link_report(temp_file.name), unsafe_allow_html=True)
-    
+
+
 def get_pdf_download_link_report(file_path):
     with open(file_path, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode("utf-8")
 
     download_link_report = f'<a href="data:application/pdf;base64,{base64_pdf}" download="report_file.pdf">Click here to download the PDF file</a>'
     return download_link_report
+
 
 # Guideline
 def show_pdf_guideline(pdf_file):
@@ -1288,13 +2164,15 @@ def show_pdf_guideline(pdf_file):
     temp_file.close()
 
     st.markdown(get_pdf_download_link_guideline(temp_file.name), unsafe_allow_html=True)
-    
+
+# Download Report file
 def get_pdf_download_link_guideline(file_path):
     with open(file_path, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode("utf-8")
 
     download_link_guideline = f'<a href="data:application/pdf;base64,{base64_pdf}" download="guideline_file.pdf">Click here to download the PDF file</a>'
     return download_link_guideline
+
 
 st.markdown("""<div id="report"></div>""", unsafe_allow_html=True)
 st.markdown("### Job Analysis Report")
