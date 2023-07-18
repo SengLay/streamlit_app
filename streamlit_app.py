@@ -352,15 +352,15 @@ def feat_importance():
 
 def image():
     itc_path = load_data("Photo/itc.png")
-    header_html_1 = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=250><figcaption>Institute of technology of Cambodia</figcaption></figure></center>".format(
+    header_html_1 = "<a href='https://itc.edu.kh/'><center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=250><figcaption>Institute of technology of Cambodia</figcaption></figure></center></a>".format(
         img_to_bytes(itc_path)
     )
     ams_path = load_data("Photo/dep.jpg")
-    header_html_2 = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=246><figcaption>Department of Applied Mathematics and Statistics</figcaption></figure></center>".format(
+    header_html_2 = "<a href='https://itc.edu.kh/home-ams/'><center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=246><figcaption>Department of Applied Mathematics and Statistics</figcaption></figure></center></a>".format(
         img_to_bytes(ams_path)
     )
     ministry_path = load_data("Photo/moey.png")
-    header_html_3 = "<center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=183><figcaption>Ministry of Education, Youth and Sport (Cambodia)</figcaption></figure></center>".format(
+    header_html_3 = "<a href='http://moeys.gov.kh/'><center><figure><img src='data:image/png;base64,{}' class='img-fluid' width=183><figcaption>Ministry of Education, Youth and Sport (Cambodia)</figcaption></figure></center></a>".format(
         img_to_bytes(ministry_path)
     )
     container = st.container()
