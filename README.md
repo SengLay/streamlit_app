@@ -14,7 +14,7 @@ git push -u origin master
 ```
 * Sometimes, it might need you to enter your **Github Username** and password which is your **Github Personal Access Token**.
 ```python
-Click On Profile Icon > Setting >
+Click On Profile Icon > Setting > Developer Setting > Personal Access Tokens > Tokens (Classic)
 ```
   
 #### STEP 3: After successfully pushed into Github repository named `streamlit_app`. Go to streamlit website `https://streamlit.io/`.
