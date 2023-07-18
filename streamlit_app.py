@@ -7,7 +7,7 @@ import os
 import tempfile
 import numpy as np
 # from sklearn.model_selection import train_test_split
-from sklearn import preprocessing
+# from sklearn import preprocessing
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics
 from sklearn.feature_selection import SelectKBest, chi2
