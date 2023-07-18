@@ -402,7 +402,7 @@ def welcome_project_description():
         employers, and educational institutions. Together, we are committed to creating a game-changing solution that transforms the 
         landscape of job prediction and salary forecasting.
 
-        <b>GitHub Source Code for Job Prediction:</b> <i><b>[Click Here!](https://github.com/SengLay/Job-Analysis)</b></i></div>
+        <b>GitHub Source Code for Job Prediction:</b> <i><b>[Click Here!](https://github.com/SengLay/streamlit_app)</b></i></div>
         ''', unsafe_allow_html=True
     )
 
