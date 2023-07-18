@@ -13,6 +13,9 @@ git remote add origin 'HTTPS link'
 git push -u origin master
 ```
 * Sometimes, it might need you to enter your **Github Username** and password which is your **Github Personal Access Token**.
+```python
+Click on Profile Icon > Setting >
+```
   
 #### STEP 3: After successfully pushed into Github repository named `streamlit_app`. Go to streamlit website `https://streamlit.io/`.
 #### STEP 4: Sign up streamlit account to use streamlit community cloud and Sign into your account.
