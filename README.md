@@ -16,6 +16,7 @@ git push -u origin master
 ```python
 Click On Profile Icon > Setting > Developer Setting > Personal Access Tokens > Tokens (Classic)
 ```
+* Then, you can start generate the **Personal Access Token** which can use for 30 days.
   
 #### STEP 3: After successfully pushed into Github repository named `streamlit_app`. Go to streamlit website `https://streamlit.io/`.
 #### STEP 4: Sign up streamlit account to use streamlit community cloud and Sign into your account.
