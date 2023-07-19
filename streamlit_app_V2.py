@@ -2241,12 +2241,12 @@ with st.expander("CLICK HERE TO SHOW DATA"):
         '''
         from sklearn.neighbors import KNeighborsClassifier
         # Train Model and Predict 
-        neigh = KNeighborsClassifier(n_neighbors = 3).fit(X_train_norm,y_train)
+        neigh = KNeighborsClassifier(n_neighbors = 7).fit(X_train_norm,y_train)
         neigh
         ''', language='python'
         )
     # Train Model and Predict
-    neigh = KNeighborsClassifier(n_neighbors=3).fit(X_train_norm, y_train)
+    neigh = KNeighborsClassifier(n_neighbors=7).fit(X_train_norm, y_train)
     st.write(neigh)
     st.write(
         '''
