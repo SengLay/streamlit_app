@@ -2232,6 +2232,8 @@ with st.expander("CLICK HERE TO SHOW DATA"):
     pre_loc()
     pre_salary()
     st.table(df.head())
+
+    st.write("X_train StandardScaler Feature Scaling")
     st.code(
         '''
         from sklearn import preprocessing
@@ -2244,6 +2246,8 @@ with st.expander("CLICK HERE TO SHOW DATA"):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4)
     X_train_norm = preprocessing.StandardScaler().fit(X_train).transform(X_train.astype(float))
     st.table(X_train_norm[0:5])
+
+    st.write("Train Model and Predict")
     st.code(
         '''
         from sklearn.neighbors import KNeighborsClassifier
@@ -2261,6 +2265,8 @@ with st.expander("CLICK HERE TO SHOW DATA"):
         We can use the model to make predictions on the test set:
         '''
     )
+
+    
     st.code(
         '''
         X_test_norm = preprocessing.StandardScaler().fit(X_test).transform(X_test.astype(float))
@@ -2327,6 +2333,7 @@ print(f"Accuracy with {num_features_to_select} features: {accuracy:.2f}")
 st.markdown("""<div id="feat-selection"></div>""", unsafe_allow_html=True)
 st.header('8. Feature Selection')
 with st.expander("CLICK HERE TO SHOW DATA"):
+    st.write("##### Feature Selection with K-Nearest Neighbors Classifier")
     st.code(
         '''
         from sklearn.feature_selection import SelectKBest, chi2
@@ -2361,6 +2368,7 @@ with st.expander("CLICK HERE TO SHOW DATA"):
     st.text(f"Feature scores: {selector.scores_[selected_feature_indices]}")
     st.text(f"Accuracy with {num_features_to_select} features: {accuracy:.2f}")
 
+    st.write("##### Shape of DataFrame named `df`")
     st.code(
         '''
         df.shape
