@@ -2646,7 +2646,7 @@ with st.expander("CLICK HERE TO SHOW DATA"):
     )
     st.text(f"Accuracy test: {accuracy_score(y_test, y_pred)}")
 
-    st.write("##### Perform feature selection with RFE")
+    st.write("##### Perform feature importances after RFE")
     st.code(
         '''
         # Perform feature selection with RFE
