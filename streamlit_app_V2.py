@@ -2649,27 +2649,6 @@ with st.expander("CLICK HERE TO SHOW DATA"):
     st.write("##### Perform feature importances after RFE")
     st.code(
         '''
-        # Perform feature selection with RFE
-        num_features_to_select = int(input('Input the number of Feature: '))
-        
-        selector = RFE(gb_classifier, n_features_to_select=num_features_to_select)
-        X_train_selected = selector.fit_transform(X_train, y_train)
-        X_test_selected = selector.transform(X_test)
-        
-        # Train and test the GradientBoostingClassifier with the selected features
-        gb_classifier.fit(X_train_selected, y_train)
-        y_pred = gb_classifier.predict(X_test_selected)
-        
-        # Calculate accuracy with the selected features
-        accuracy = accuracy_score(y_test, y_pred)
-        
-        # Get the selected feature names
-        selected_feature_names = df.drop(columns='Salary_min', axis=1).columns[selector.support_]
-        
-        print(f"Selected features: {selected_feature_names}")
-        print(f"Feature ranking: {selector.ranking_}")
-        print(f"Accuracy with {num_features_to_select} features: {accuracy:.2f}")
-        
         # Get feature importances after RFE
         feature_importance = pd.Series(gb_classifier.feature_importances_, index=selected_feature_names).sort_values(ascending=False)
         
