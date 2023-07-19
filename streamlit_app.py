@@ -1947,6 +1947,7 @@ with st.expander("CLICK HERE TO SHOW DATA"):
 st.markdown("""<div id="gbc"></div>""", unsafe_allow_html=True)
 st.header('10. Gradient Boosting Classifier')
 with st.expander("CLICK HERE TO SHOW DATA"):
+    st.write("##### Initialize the Gradient Boosting Classifier")
     st.code(
         '''
         from sklearn.ensemble import GradientBoostingClassifier
@@ -1968,6 +1969,7 @@ with st.expander("CLICK HERE TO SHOW DATA"):
     # Assuming you have also prepared the test data X_test_norm
     y_pred = gb_classifier.predict(X_test_norm)
 
+    st.write("##### Accuracy, Classification Report and Confusion Matrix")
     st.code(
         '''
         from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
@@ -1997,6 +1999,7 @@ with st.expander("CLICK HERE TO SHOW DATA"):
     st.text("Confusion Matrix:")
     st.text(conf_matrix)
 
+    st.write("##### Perform feature selection with RFE")
     st.code(
         '''
         from sklearn.feature_selection import RFE
@@ -2058,6 +2061,7 @@ with st.expander("CLICK HERE TO SHOW DATA"):
     st.text(f"Feature ranking: {selector.ranking_}")
     st.text(f"Accuracy with {num_features_to_select} features: {accuracy:.2f}")
 
+    st.write("##### Accuracy Score")
     st.code(
         '''
         accuracy_score(y_test, y_pred)
