@@ -2710,10 +2710,9 @@ with st.expander("CLICK HERE TO SHOW DATA"):
 st.markdown("""<div id="result"></div>""", unsafe_allow_html=True)
 st.header('11. Result')
 with st.expander("CLICK HERE TO SHOW DATA"):
+    st.write("##### KNN Classification")
     st.text(
         '''
-        KNN Classification Result:
-        
         Selected features: Index(['PositionLevel', 'Location', 'WorkingExperience', 'Qualification'], dtype='object')
         Feature scores: [11.93 19.07 59.19  7.85]
         Accuracy with 4 features: 0.49
