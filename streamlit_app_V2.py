@@ -2297,7 +2297,7 @@ X = df.drop(columns='Salary_min', axis=1)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4)
 X_train_norm = preprocessing.StandardScaler().fit(X_train).transform(X_train.astype(float))
 # Create a K-Nearest Neighbors classifier
-knn = KNeighborsClassifier(n_neighbors=5)
+knn = KNeighborsClassifier(n_neighbors=7)
 # Perform feature selection with SelectKBest using chi-square
 # num_features_to_select= int(input('Input the number of Feature: '))
 num_features_to_select = 4
