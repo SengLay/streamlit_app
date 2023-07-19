@@ -66,6 +66,8 @@ def table_of_content():
 
     st.sidebar.write("[10. Gradient Boosting Classifier](#gbc)")
 
+    st.sidebar.write("[11. Result](#result)")
+
     st.sidebar.markdown("[Project Report](#report)")
     st.sidebar.markdown("[Project Guideline](#guideline)")
 table_of_content()
@@ -2703,6 +2705,20 @@ with st.expander("CLICK HERE TO SHOW DATA"):
 
     # feature importance image function
     feat_importance()
+
+# Result
+st.markdown("""<div id="result"></div>""", unsafe_allow_html=True)
+st.header('11. Result')
+with st.expander("CLICK HERE TO SHOW DATA"):
+    st.text(
+        '''
+        KNN Classification Result:
+        
+        Selected features: Index(['PositionLevel', 'Location', 'WorkingExperience', 'Qualification'], dtype='object')
+        Feature scores: [11.93 19.07 59.19  7.85]
+        Accuracy with 4 features: 0.49
+        '''
+    )
 
 # Report
 def show_pdf_report(pdf_file):
