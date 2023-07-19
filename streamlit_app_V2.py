@@ -2402,6 +2402,7 @@ st.markdown("""<div id="svm"></div>""", unsafe_allow_html=True)
 st.header('9. SVM (Support Vector Machine) with Scikit-learn')
 with st.expander("CLICK HERE TO SHOW DATA"):
     st.subheader('9.1. SVM with Polynomial Kernel')
+    st.write("##### SVM Classification using Polynomial Kernel")
     st.write(
         '''
         The SVM algorithm offers a choice of kernel functions for performing its processing. Basically, mapping data 
@@ -2422,6 +2423,7 @@ with st.expander("CLICK HERE TO SHOW DATA"):
     X = df.drop(columns='Salary_min', axis=1)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4)
     X_train_norm = preprocessing.StandardScaler().fit(X_train).transform(X_train.astype(float))
+
     st.code(
         '''
         from sklearn import svm
@@ -2434,6 +2436,8 @@ with st.expander("CLICK HERE TO SHOW DATA"):
     clf = svm.SVC(kernel='poly')
     st.write(clf.fit(X_train, y_train))
     st.write('After being fitted, the model can then be used to predict new values:')
+    
+    st.write("##### SVM Predict")
     st.code(
         '''
         yhat = clf.predict(X_test)
