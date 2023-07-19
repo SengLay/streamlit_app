@@ -717,11 +717,11 @@ def EDA():
         st.markdown("""<div id="job-type"></div>""", unsafe_allow_html=True)
         st.subheader("5.1. Job Type")
         # with st.expander("CLICK HERE TO SHOW DATA"):
-        st.write('##### Minimum Salary Values Counts')
+        st.write('##### Job Type Values Counts')
         # Values Count
         st.code(
             '''
-            df.Salary_min.value_counts()
+            df.JobType.value_counts()
             ''', language='python'
         )
         st.write(
@@ -729,7 +729,7 @@ def EDA():
             Take a look at the result after checking.
             """
         )
-        st.text(df.Salary_min.value_counts())
+        st.text(df.JobType.value_counts())
 
         # Distribution of Job Type
         st.write('##### Distribution of each Job Type')
