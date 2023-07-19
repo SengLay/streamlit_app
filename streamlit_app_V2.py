@@ -524,23 +524,28 @@ def data_exploration_4():
             """
         )
         code = '''
+            import streamlit as st
             import pandas as pd
+            from pathlib import Path
+            import base64
+            import io
+            import os
+            import tempfile
             import numpy as np
-            import seaborn as sns
-            import matplotlib.pyplot as plt
-            %matplotlib inline
-            from sklearn import metrics
-            from sklearn.preprocessing import MinMaxScaler
             from sklearn.model_selection import train_test_split
-            from sklearn.linear_model import LogisticRegression
-            from sklearn.metrics import confusion_matrix, accuracy_score, roc_auc_score
-            from statsmodels.stats.outliers_influence import variance_inflation_factor
+            from sklearn import preprocessing
+            from sklearn.neighbors import KNeighborsClassifier
+            from sklearn import metrics
+            from sklearn.feature_selection import SelectKBest, chi2
+            from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+            import itertools
+            import matplotlib.pyplot as plt
             from sklearn.feature_selection import RFE
-            from sklearn.preprocessing import LabelEncoder
-            import warnings
-            warnings.filterwarnings("ignore")
-            Display all the column of the dataframes
-            pd.pandas.set_option('display.max_columns', None)
+            from sklearn.ensemble import GradientBoostingClassifier
+            from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+            from sklearn.ensemble import GradientBoostingClassifier
+            from sklearn.metrics import accuracy_score
+            import seaborn as sns
             '''
         st.code(code, language='python')
 
