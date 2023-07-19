@@ -2443,6 +2443,7 @@ with st.expander("CLICK HERE TO SHOW DATA"):
     yhat = clf.predict(X_test)
     st.write(yhat[0:5])
     st.subheader('9.2. Evaluation')
+    st.write("##### SVM Classification Report, Confusion Matrix, and Plotting Confusion Matrix")
     st.code(
         '''
         from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
@@ -2508,12 +2509,15 @@ with st.expander("CLICK HERE TO SHOW DATA"):
     # confusion matrix image graph
     confusion()
 
+    st.write("##### Confusion Matrix Form")
     st.code(
         '''
         confusion_matrix(y_test, yhat)
         ''', language='python'
     )
     st.text(confusion_matrix(y_test, yhat))
+
+    st.write("##### SVM Accuracy")
     st.code(
         '''
         accuracy_score(y_test, yhat)
