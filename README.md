@@ -29,5 +29,5 @@ Click On Profile Icon > Setting > Developer Setting > Personal Access Tokens > T
 #### STEP 11: App URL (Optional), For example: `job-analysis`.streamlit.app (`https://job-analysis.streamlit.app`)
 #### STEP 12: Click on `Deploy!`
 
-## 🥳🌟 We're ready to go! Successfully Deployed!
+## 👨‍💻 We're ready to go! Successfully Deployed!
 <img src='./Screen Shot 2023-07-31 at 2.54.31 PM.png'>
