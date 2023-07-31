@@ -30,4 +30,4 @@ Click On Profile Icon > Setting > Developer Setting > Personal Access Tokens > T
 #### STEP 12: Click on `Deploy!`
 
 ## We're ready to go! Successfully Deployed!
-<img src=''>
+<img src='Screa'>
