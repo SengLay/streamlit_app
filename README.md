@@ -1,6 +1,6 @@
-# streamlit_app
+# 🚀 Streamlit App Deployment...
 
-## DETAILS STEPS of our streamlit deployment
+## 🔭 DETAILS STEPS of our streamlit deployment
 
 #### STEP 1: Create repository name `streamlit_app`.
 #### STEP 2: Push files needed for deployment. Use the commands below in terminal (MacBook) / Command Prompt (Window):
@@ -30,3 +30,4 @@ Click On Profile Icon > Setting > Developer Setting > Personal Access Tokens > T
 #### STEP 12: Click on `Deploy!`
 
 ## We're ready to go! Successfully Deployed!
+<img src=''>
